@@ -1,5 +1,16 @@
 ﻿# The script of the game goes in this file.
 
+init python:
+
+    # store player data
+    name = ""
+    personality = {
+    'nice': 0.0,  # mean to nice, 0 > = mean
+    'social': 0.0,  # antisocial to social, 0 > = introverted
+    'agress': 0.0  # agressive to passive, 0 > = passive
+    }
+
+
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
 
@@ -24,9 +35,40 @@ label start:
 
     # These display lines of dialogue.
 
-    e "You've created a new Ren'Py game."
+    "Background intro to the world"
 
-    e "Once you add a story, pictures, and music, you can release it to the world!"
+    # get player nameW
+    $name = renpy.input("Pick a name:").strip()
+
+    # calc initial player personality
+    menu:
+        "Mean/Nice Choice"
+
+        "Do something nice":
+            $personality['nice'] += 1
+
+        "Do something mean":
+            $personality['nice'] -= 1
+
+    menu:
+        "Social/Antisocial choice"
+
+        "Do something social":
+            $personality['social'] += 1
+
+        "Do something antisocial":
+            $personality['social'] -= 1
+
+    menu:
+        "Agressive/passive choice"
+
+        "Do something agressive":
+            $personality['agress'] += 1
+
+        "Do something passive":
+            $personality['agress'] -= 1
+
+    jump tree_start
 
     # This ends the game.
 

@@ -1,0 +1,36 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/tree.rpy", line 81, in script
+    $actResolve()
+  File "game/tree.rpy", line 81, in <module>
+    $actResolve()
+  File "game/tree.rpy", line 60, in actResolve
+    options = genOptions()
+  File "game/tree.rpy", line 34, in genOptions
+    options.add(actAgress.pop())
+KeyError: 'pop from an empty set'
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/tree.rpy", line 81, in script
+    $actResolve()
+  File "C:\Users\smend\Documents\renpy-7.1.1-sdk\renpy\ast.py", line 882, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "C:\Users\smend\Documents\renpy-7.1.1-sdk\renpy\python.py", line 1913, in py_exec_bytecode
+    exec bytecode in globals, locals
+  File "game/tree.rpy", line 81, in <module>
+    $actResolve()
+  File "game/tree.rpy", line 60, in actResolve
+    options = genOptions()
+  File "game/tree.rpy", line 34, in genOptions
+    options.add(actAgress.pop())
+  File "C:\Users\smend\Documents\renpy-7.1.1-sdk\renpy\python.py", line 713, in do_mutation
+    return method(self, *args, **kwargs)
+KeyError: 'pop from an empty set'
+
+Windows-8-6.2.9200
+Ren'Py 7.1.1.929
+KarmaHistory 1.0
+Sun Nov 11 17:12:22 2018
