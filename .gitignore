@@ -1,5 +1,5 @@
 
 log.txt
-**/*.rpyb
-**/*.rpyc
-**/*.save
+*.rpyb
+*.rpyc
+*.save
