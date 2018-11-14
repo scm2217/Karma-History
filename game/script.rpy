@@ -42,31 +42,65 @@ label start:
 
     # calc initial player personality
     menu:
-        "Mean/Nice Choice"
+        "Your family is a minor vassal of house"
 
-        "Do something nice":
-            $personality['nice'] += 1
+        "Lannister":
+            $personality['nice'] -= 5
+            $personality['social'] += 5
+            $personality['aggressive'] += 5
 
-        "Do something mean":
-            $personality['nice'] -= 1
+        "Stark":
+            $personality['nice'] += 10
+            $personality['social'] -= 5
+
+        "Martell":
+            $personality['social'] += 5
+            $personality['aggressive'] -= 10
+
+        "Arryn":
+            $personality['social'] -= 5
+            $personality['aggressive'] -= 10
+
+        "Baratheon":
+            $personality['nice'] += 5
+            $personality['social'] += 5
+            $personality['aggressive'] += 5
+
+        "Greyjoy":
+            $personality['nice'] -= 5
+            $personality['social'] -= 5
+            $personality['aggressive'] += 5
+
+        "Tyrell":
+            $personality['social'] += 10
+            $personality['aggressive'] += 5
 
     menu:
-        "Social/Antisocial choice"
+        "As a noble born child you:"
 
-        "Do something social":
-            $personality['social'] += 1
+        "Tried your best to treat those considered below you with kindness":
+            $personality['nice'] += 10
 
-        "Do something antisocial":
-            $personality['social'] -= 1
+        "Used your status to torment the pathetic peasants when bored":
+            $personality['nice'] -= 10
 
     menu:
-        "Agressive/passive choice"
+        "During castle feasts you would:"
 
-        "Do something agressive":
-            $personality['agress'] += 1
+        "Play with the other children":
+            $personality['social'] += 10
 
-        "Do something passive":
-            $personality['agress'] -= 1
+        "Sneak away as soon as you got the chance":
+            $personality['social'] -= 10
+
+    menu:
+        "You felt that the combat training you were put through was:"
+
+        "Exciting and prepared for any danger that came your way":
+            $personality['agress'] += 10
+
+        "Uninteresting and a waste of your talents":
+            $personality['agress'] -= 10
 
     jump tree_start
 
