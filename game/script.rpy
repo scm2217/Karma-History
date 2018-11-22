@@ -7,8 +7,9 @@ init python:
     personality = {
     'nice': 0.0,  # mean to nice, 0 > = mean
     'social': 0.0,  # antisocial to social, 0 > = introverted
-    'agress': 0.0  # agressive to passive, 0 > = passive
+    'aggress': 0.0  # agressive to passive, 0 > = passive
     }
+    start = ""
 
 
 # Declare characters used by this game. The color argument colorizes the
@@ -47,33 +48,40 @@ label start:
         "Lannister":
             $personality['nice'] -= 5
             $personality['social'] += 5
-            $personality['aggressive'] += 5
+            $personality['aggress'] += 5
+            $start = "Lannister"
 
         "Stark":
             $personality['nice'] += 10
             $personality['social'] -= 5
+            $start = "Stark"
 
         "Martell":
             $personality['social'] += 5
-            $personality['aggressive'] -= 10
+            $personality['aggress'] -= 10
+            $start = "Martell"
 
         "Arryn":
             $personality['social'] -= 5
-            $personality['aggressive'] -= 10
+            $personality['aggress'] -= 10
+            $start = "Arryn"
 
         "Baratheon":
             $personality['nice'] += 5
             $personality['social'] += 5
-            $personality['aggressive'] += 5
+            $personality['aggress'] += 5
+            $start = "Baratheon"
 
         "Greyjoy":
             $personality['nice'] -= 5
             $personality['social'] -= 5
-            $personality['aggressive'] += 5
+            $personality['aggress'] += 5
+            $start = "Greyjoy"
 
         "Tyrell":
             $personality['social'] += 10
-            $personality['aggressive'] += 5
+            $personality['aggress'] += 5
+            $start = "Tyrell"
 
     menu:
         "As a noble born child you:"
@@ -97,10 +105,10 @@ label start:
         "You felt that the combat training you were put through was:"
 
         "Exciting and prepared for any danger that came your way":
-            $personality['agress'] += 10
+            $personality['aggress'] += 10
 
         "Uninteresting and a waste of your talents":
-            $personality['agress'] -= 10
+            $personality['aggress'] -= 10
 
     jump tree_start
 
