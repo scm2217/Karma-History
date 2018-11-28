@@ -2,7 +2,7 @@ init python:
     import random
 
     class StoryEvent(object):
-        def __init__(self, name, pre_conditions, content, tags, postTags=None):
+        def __init__(self, name, pre_conditions, content, tags, postTags=set()):
             self.name = name
             self.pre_conditions = pre_conditions
             self.tags = tags
@@ -25,8 +25,9 @@ init python:
 
 
     class Choice(object):
-        def __init__(self, name, tags, personalityReq, postTags):
+        def __init__(self, name, content, tags, personalityReq, postTags):
             self.name = name
+            self.content = content
             self.tags = tags
             self.personalityReq = personalityReq
             self.postTags = postTags
@@ -70,7 +71,7 @@ init python:
                 tags = ch.tags
                 if tags not in self.choices:
                     self.choices[tags] = []
-                self.choices[tags].append(act)
+                self.choices[tags].append(ch)
 
 
         def getEvent(self, name):
@@ -121,7 +122,7 @@ init python:
 
             # remove all choices that player cannot use
             for ch in choices:
-                for attr, val in ch.items():
+                for attr, val in ch.personalityReq.items():
                     if(val < 0 and personality[attr] > val):
                         choices.remove(ch)
                     elif(val > 0 and personality[attr] < val):
@@ -135,7 +136,7 @@ init python:
     ]
 
     choices = [
-        Choice('fight', frozenset('fight'), { 'aggress': 0.0 }, frozenset(['Aggress+']))
+        Choice('diploYes', 'Assure him of your success', frozenset(['Quest']), { 'social': 0.0 }, frozenset(['social+']))
     ]
 
     people = [
@@ -144,10 +145,22 @@ init python:
     ]
 
     storyEvents = {
-        'start': StoryEvent('start', 'None', 'Starting in Castle, may need grammar here', frozenset(['start']), None)
+        'start': StoryEvent('start', 'None', 'Starting in Castle, may need grammar here', frozenset(['Quest']), None)
     }
 
     manager = StoryManager(storyEvents, people, actions, choices)
+
+    def displayText(ev, action, person):
+        # can use substitutions to make test better very basic for now
+        e(ev.content)
+
+
+    def getPlayerChoice(evf, act, person, choices):
+        # display and retieve choice here
+        optionList = [(ch.content, ch.postTags) for ch in choices]
+        playerChoice = menu(optionList)
+        return playerChoice
+
 
     def executeEvent(name):
         ev = manager.getEvent(name)
@@ -155,8 +168,13 @@ init python:
         if not person:
             print("We need to account for if there is no valid people for any valid actions")
             return  # temporary fix
+        displayText(ev, act, person)
+        choices = manager.getChoices(act.tags, personality)
+        if choices:
+            choiceResult = getPlayerChoice(ev, act, person, choices)
 
-        choices = manager.getChoices(act.tags)
+        # need to deicde what to use for postTags
+
 
     def pickEvent(post=None):
         if post:
