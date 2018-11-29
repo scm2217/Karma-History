@@ -1,6 +1,6 @@
 ﻿# The script of the game goes in this file.
 
-init python:
+python early:
 
     # store player data
 
@@ -19,7 +19,22 @@ init python:
                 'cPerson': ''
             }
 
-    persistent.history = PlayerHistory()
+        def __eq__(self, other):
+            if not other:
+                return False
+            if self.name != other.name:
+                return False
+            if self.stage != other.stage:
+                return False
+            if self.personality != other.personality:
+                return False
+            if self.refTags != other.refTags:
+                return False
+            return True
+
+init python:
+    if persistent.history is None:
+        persistent.history = PlayerHistory()
 
 
 # Declare characters used by this game. The color argument colorizes the
