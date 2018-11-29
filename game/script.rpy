@@ -3,13 +3,23 @@
 init python:
 
     # store player data
-    name = ""
-    personality = {
-    'nice': 0.0,  # mean to nice, 0 > = mean
-    'social': 0.0,  # antisocial to social, 0 > = introverted
-    'aggress': 0.0  # agressive to passive, 0 > = passive
-    }
-    start = ""
+
+    class PlayerHistory(object):
+        def __init__(self):
+            self.name = ''
+            self.personality = {
+            'nice': 0.0,  # mean to nice, 0 > = mean
+            'social': 0.0,  # antisocial to social, 0 > = introverted
+            'aggress': 0.0  # agressive to passive, 0 > = passive
+            }
+            self.stage = 'stage1'
+            self.refTags = {
+                'location': '',
+                'alliance': '',
+                'cPerson': ''
+            }
+
+    persistent.history = PlayerHistory()
 
 
 # Declare characters used by this game. The color argument colorizes the
@@ -38,77 +48,58 @@ label start:
 
     "Background intro to the world"
 
-    # get player nameW
-    $name = renpy.input("Pick a name:").strip()
+    # get player name
+    $persistent.history.name = renpy.input("Pick a name:").strip()
 
     # calc initial player personality
     menu:
         "Your family is a minor vassal of house"
 
         "Lannister":
-            $personality['nice'] -= 5
-            $personality['social'] += 5
-            $personality['aggress'] += 5
-            $start = "Lannister"
+            $persistent.history.personality['nice'] -= 5
+            $persistent.history.personality['social'] += 5
+            $persistent.history.personality['aggress'] += 5
+            $persistent.history.alliance = "Lannister"
+            $persistent.history.refTags['location'] = "Lannisport"
 
         "Stark":
-            $personality['nice'] += 10
-            $personality['social'] -= 5
-            $start = "Stark"
+            $persistent.history.personality['nice'] += 10
+            $persistent.history.personality['social'] -= 5
+            $persistent.history.alliance = "Stark"
+            $persistent.history.refTags['location'] = "Winterfell"
 
         "Martell":
-            $personality['social'] += 5
-            $personality['aggress'] -= 10
-            $start = "Martell"
-
-        "Arryn":
-            $personality['social'] -= 5
-            $personality['aggress'] -= 10
-            $start = "Arryn"
-
-        "Baratheon":
-            $personality['nice'] += 5
-            $personality['social'] += 5
-            $personality['aggress'] += 5
-            $start = "Baratheon"
-
-        "Greyjoy":
-            $personality['nice'] -= 5
-            $personality['social'] -= 5
-            $personality['aggress'] += 5
-            $start = "Greyjoy"
-
-        "Tyrell":
-            $personality['social'] += 10
-            $personality['aggress'] += 5
-            $start = "Tyrell"
+            $persistent.history.personality['social'] += 5
+            $persistent.history.personality['aggress'] -= 10
+            $persistent.history.alliance = "Martell"
+            $persistent.history.refTags['location'] = "Sunspear"
 
     menu:
         "As a noble born child you:"
 
         "Tried your best to treat those considered below you with kindness":
-            $personality['nice'] += 10
+            $persistent.history.personality['nice'] += 10
 
         "Used your status to torment the pathetic peasants when bored":
-            $personality['nice'] -= 10
+            $persistent.history.personality['nice'] -= 10
 
     menu:
         "During castle feasts you would:"
 
         "Play with the other children":
-            $personality['social'] += 10
+            $persistent.history.personality['social'] += 10
 
         "Sneak away as soon as you got the chance":
-            $personality['social'] -= 10
+            $persistent.history.personality['social'] -= 10
 
     menu:
         "You felt that the combat training you were put through was:"
 
         "Exciting and prepared for any danger that came your way":
-            $personality['aggress'] += 10
+            $persistent.history.personality['aggress'] += 10
 
         "Uninteresting and a waste of your talents":
-            $personality['aggress'] -= 10
+            $persistent.history.personality['aggress'] -= 10
 
     jump tree_start
 

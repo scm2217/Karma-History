@@ -18,10 +18,11 @@ init python:
 
 
     class Action(object):
-        def __init__(self, name, content, tags):
+        def __init__(self, name, content, tags, personTags):
             self.name = name
-            self.personality = personality
+            self.personality = persistent.history.personality
             self.tags = tags
+            self.personTags = personTags
 
 
     class Choice(object):
@@ -31,13 +32,6 @@ init python:
             self.tags = tags
             self.personalityReq = personalityReq
             self.postTags = postTags
-
-
-    class PlayerHistory(object):
-        def __init__(self):
-            self.eventsDone = set()
-            self.choices = set()
-            self.loyalty = ""
 
 
     class StoryManager(object):
@@ -107,7 +101,13 @@ init python:
             person = None
             random.shuffle(actions)
             for act in actions:
-                person = self.getPerson(act.tags)
+                personTags = act.personTags
+                for pTag in personTags:
+                    if '$' in pTag:
+                        personTags.remove(pTag)
+                        pTag = persistent.history.refTags[pTag[1:]]
+                        personTags.add(pTag)
+                person = self.getPerson(personTags)
                 if person:
                     return act, person
             # failed to find any actions with people left
@@ -129,19 +129,17 @@ init python:
                         choices.remove(ch)
             return choices
 
-    history = PlayerHistory()
-
     actions = [
-        Action('startQuest', 'Go hunt some bandits', frozenset(['Quest']))
+        Action('startQuest', 'Go hunt some bandits', frozenset(['Quest']), set(['Leader', '$location']))
     ]
 
     choices = [
-        Choice('diploYes', 'Assure him of your success', frozenset(['Quest']), { 'social': 0.0 }, frozenset(['social+']))
+        Choice('diploYes', 'Assure him of your success', frozenset(['Quest']), { 'social': 0.0 }, set(['social+']))
     ]
 
     people = [
-        Person("Tywin", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Tywin', 'Lannister', 'Quest'])),
-        Person("Eddard", { 'nice': 10.0, 'social': -5.0, 'aggress': 0.0 }, frozenset(['Stark', 'Eddard', 'Quest']))
+        Person("Tywin", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Tywin', 'Lannister', 'Lannisport', 'Quest'])),
+        Person("Eddard", { 'nice': 10.0, 'social': -5.0, 'aggress': 0.0 }, frozenset(['Stark', 'Leader', 'Eddard', 'Winterfell', 'Quest']))
     ]
 
     storyEvents = {
@@ -166,26 +164,28 @@ init python:
         ev = manager.getEvent(name)
         act, person = manager.getActionPerson(ev.tags)
         if not person:
-            print("We need to account for if there is no valid people for any valid actions")
+            e("We need to account for if there is no valid people for any valid actions")
             return  # temporary fix
         displayText(ev, act, person)
-        choices = manager.getChoices(act.tags, personality)
+        choices = manager.getChoices(act.tags, persistent.history.personality)
         if choices:
             choiceResult = getPlayerChoice(ev, act, person, choices)
-
-        # need to deicde what to use for postTags
+            pickEvent(choiceResult)
+        else:
+            pickEvent(ev.postTags)
 
 
     def pickEvent(post=None):
+        validEvents = none
         if post:
-            if post != 'end':
-                executeEvent(post)
+            if 'end' in post:
+                return
+            validEvents = manager.getValidEventNames(post)
         # pick random event matchup pre-con
         else:
-            validEvents = manager.getValidEventNames(history.done)
-
+            validEvents = manager.getValidEventNames(persistent.history.stage)
+        executeEvent(random.choice(validEvents))
 
 label tree_start:
     "Sometime later..."
-    $history.loyalty = start
     $executeEvent('start')
