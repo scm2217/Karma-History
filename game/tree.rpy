@@ -20,7 +20,7 @@ init python:
     class Action(object):
         def __init__(self, name, content, tags, personTags):
             self.name = name
-            self.personality = persistent.history.personality
+            self.content = content
             self.tags = tags
             self.personTags = personTags
 
@@ -72,11 +72,11 @@ init python:
             return self.storyEvents[name]
 
 
-        def getValidEventNames(self, doneTags):
+        def getValidEventNames(self, postTags):
             stories = []
-            for subTags, names in self.StoryByPre.items():
-                if subTags.issubtset(doneTags):
-                    stories.extend(doneTags)
+            for preTags, names in self.storyByPre.items():
+                if preTags.issuperset(postTags):
+                    stories.extend(names)
             return stories
 
 
@@ -125,32 +125,151 @@ init python:
                 for attr, val in ch.personalityReq.items():
                     if(val < 0 and personality[attr] > val):
                         choices.remove(ch)
-                    elif(val > 0 and personality[attr] < val):
+                    elif(val >= 0 and personality[attr] < val):
                         choices.remove(ch)
             return choices
 
+
+    storyEvents = {
+        'start1': StoryEvent(
+            'start',
+            frozenset(),
+            'It is a beutiful day in $location',
+            frozenset(['chill', 'leader']),
+            frozenset(['quest1', 'leader', 'startQuest'])
+        ),
+
+        'start1b': StoryEvent(
+            'start',
+            frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
+            'In conversation he offers you a quest',
+            frozenset(['quest1', 'startQuest', 'hunt']),
+            frozenset(['quest2', 'startQuest'])
+        ),
+
+        'start1c': StoryEvent(
+            'start',
+            frozenset(['quest2', 'startQuest', 'hunt']),
+            'Do you want to hunt some bandits?',
+            frozenset(),
+            frozenset(['quest3', 'startQuest'])
+        ),
+
+        'start1d': StoryEvent(
+            'start',
+            frozenset(['quest3', 'startQuest', 'hunt']),
+            'You accept the challenge.',
+            frozenset(['prepare', 'hunt']),
+            frozenset(['quest4', 'startQuest', 'weaponChoice'])
+        ),
+        'start1e': StoryEvent(
+            'start',
+            frozenset(['startQuest ', 'quest4', 'weaponChoice']),
+            'You realize that you are packing too heavy.',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            frozenset(['quest5', 'startQuest'])
+        )
+    }
+
     actions = [
-        Action('startQuest', 'Go hunt some bandits', frozenset(['Quest']), set(['Leader', '$location']))
+        Action(
+            'relaxLeader',
+            'You\'re kickin it with $cPerson',
+            frozenset(['chill', 'leader']),
+            set(['leader', '$location'])
+        ),
+        Action(
+            'startQuest',
+            '$cPerson requets for you to hunt bandits in exchange for gold',
+            frozenset(['quest1', 'startQuest', 'hunt']),
+            set(['leader', '$location'])
+        ),
+        Action(
+            'startQuest',
+            'you sharpen your sword, and ready your bows, preparing for the hunt',
+            frozenset(['prepare', 'hunt']),
+            set()
+        ),
+        Action(
+            'startQuest',
+            'Do yu want your bow?, or do you want your sword',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            set()
+        )
     ]
 
     choices = [
-        Choice('diploYes', 'Assure him of your success', frozenset(['Quest']), { 'social': 0.0 }, set(['social+']))
+        Choice(
+            'bowPick',
+            'I need range',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'social': 0.0 },
+            set(['social+'])
+        ),
+        Choice(
+            'arrowPick',
+            'I need to be able to fight close range',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'aggress': 2 },
+            set(['aggress+'])
+        ),
+        Choice(
+            'handsPick',
+            'forget those weapons, i\'m going to use my thumbs',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'aggress': 3},
+            set(['social+'])
+        ),
+        Choice(
+            'bowPick',
+            'I need range',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'social': 0.0 },
+            set(['social+'])
+        ),
+        Choice(
+            'arrowPick',
+            'I need to be able to fight close range',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'aggress': -1 },
+            set(['aggress-'])
+        ),
+        Choice(
+            'handsPick',
+            'forget those weapons, i\'m going to use my thumbs',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+            { 'aggress': -1},
+            set(['social-'])
+        )
     ]
 
     people = [
-        Person("Tywin", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Tywin', 'Lannister', 'Lannisport', 'Quest'])),
-        Person("Eddard", { 'nice': 10.0, 'social': -5.0, 'aggress': 0.0 }, frozenset(['Stark', 'Leader', 'Eddard', 'Winterfell', 'Quest']))
+        Person("Tywin", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Tywin', 'leader', 'Lannister', 'Lannisport', 'quest'])),
+        Person("Eddard", { 'nice': 10.0, 'social': -5.0, 'aggress': 0.0 }, frozenset(['Eddard', 'leader', 'Stark', 'Winterfell', 'quest'])),
+        Person("Oberyn", { 'nice': 10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Oberyn', 'leader', 'Martell', 'Sunspear', 'quest'])),
+        Person("The Bolder", { 'nice': -10.0, 'social': 5.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
+        Person("The Pup", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
     ]
 
-    storyEvents = {
-        'start': StoryEvent('start', 'None', 'Starting in Castle, may need grammar here', frozenset(['Quest']), None)
-    }
 
     manager = StoryManager(storyEvents, people, actions, choices)
 
-    def displayText(ev, action, person):
+    def parseText(txt):
+        result = ""
+        for word in txt.split():
+            word = str(word)
+            if '$' in word:
+                word = persistent.history.refTags[word[1:]]
+            result += word + " "
+        result = result[:-1] + '.'
+        return result
+
+
+    def displayText(ev, act, person):
         # can use substitutions to make test better very basic for now
-        e(ev.content)
+        persistent.history.refTags['cPerson'] = person.name
+        txt = parseText(ev.content) + " " + parseText(act.content)
+        renpy.say(person.name, txt)
 
 
     def getPlayerChoice(evf, act, person, choices):
@@ -164,7 +283,7 @@ init python:
         ev = manager.getEvent(name)
         act, person = manager.getActionPerson(ev.tags)
         if not person:
-            e("We need to account for if there is no valid people for any valid actions")
+            renpy.say(None, "We need to account for if there is no valid people for any valid actions")
             return  # temporary fix
         displayText(ev, act, person)
         choices = manager.getChoices(act.tags, persistent.history.personality)
@@ -172,20 +291,23 @@ init python:
             choiceResult = getPlayerChoice(ev, act, person, choices)
             pickEvent(choiceResult)
         else:
-            pickEvent(ev.postTags)
+            postT = ev.postTags
+            pickEvent(postT)
 
 
-    def pickEvent(post=None):
-        validEvents = none
+    def pickEvent(post):
+        validEvents = None
         if post:
-            if 'end' in post:
+            if set(['end']) in post:
                 return
             validEvents = manager.getValidEventNames(post)
         # pick random event matchup pre-con
         else:
             validEvents = manager.getValidEventNames(persistent.history.stage)
-        executeEvent(random.choice(validEvents))
+
+        if(validEvents):
+            executeEvent(random.choice(validEvents))
 
 label tree_start:
     "Sometime later..."
-    $executeEvent('start')
+    $executeEvent('start1')
