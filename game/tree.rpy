@@ -214,19 +214,19 @@ init python:
 
         'quest1c': StoryEvent(
             'quest1c',
-            frozenset(['huntResult', 'startQuest']),
-            'You catch your prey',
-            frozenset(['barter', 'life']),
-            frozenset(['spare', 'kill']),
-            frozenset(['endQuest'])
+            frozenset(['negotiate', 'fight', 'prepareToFight']),
+            'You lunge at his heart, he takes it and dies',
+            frozenset([]),
+            frozenset(['noOption']),
+            frozenset(['revival'])
         ),
 
         'qeust1d': StoryEvent(
             'qeust1d',
             frozenset(['huntResult', 'startQuest']),
-            'You catch your prey',
-            frozenset(['barter', 'life']),
-            frozenset(['spare', 'kill']),
+            'But then he revives himself and screaming \'The Lord of the Light!\' What do you do?',
+            frozenset([]),
+            frozenset(['fight', 'options']),
             frozenset(['endQuest'])
         ),
 
@@ -342,7 +342,14 @@ init python:
             'You try to talk him out of the fight',
             frozenset(['peaceful', 'fight', 'negotiation']),
             { 'aggress': -1 },
-            set(['peaceful', 'negotiation'])
+            set(['talk'])
+        ),
+        Choice(
+            'aggressiveFightNegotiation',
+            'You raise your sword to prepare for the fight',
+            frozenset(['aggressive', 'fight', 'negotiation']),
+            { 'aggress': -1 },
+            set(['prepareToFight'])
         ),
     ]
 
