@@ -279,14 +279,17 @@ init python:
 
 
     def displayText(ev, act, person):
-        # can use substitutions to make test better very basic for now
-        renpy.show(person.name)
-        persistent.history.refTags['cPerson'] = person.name
-        txt = parseText(ev.content) + " " + parseText(act.content)
-        renpy.say(person.name, txt)
+        txt = parseText(ev.content)
+        if act:
+            renpy.show(person.name)
+            persistent.history.refTags['cPerson'] = person.name
+            txt += " " + parseText(act.content)
+            renpy.say(person.name, txt)
+        else:
+            renpy.say(None, txt)
 
 
-    def getPlayerChoice(evf, act, person, choices):
+    def getPlayerChoice(choices):
         # display and retieve choice here
         optionList = [(ch.content, [ch.name, ch.postTags]) for ch in choices]
         playerChoice = menu(optionList)
@@ -295,15 +298,17 @@ init python:
 
     def executeEvent(name):
         ev = manager.getEvent(name)
-        act, person = manager.getActionPerson(ev.actionTags)
-        if not person:
-            renpy.say(None, "We need to account for if there is no valid people for any valid actions")
-            return  # temporary fix
+        persistent.history.refTags[ev.name] = { "action": "none", "person": "none", "choice": "none" }
+        act, person = None, None
+        if len(ev.actionTags) > 0:
+            act, person = manager.getActionPerson(ev.actionTags)
+            persistent.history.refTags[ev.name]["action"] = act.name
+            persistent.history.refTags[ev.name]["person"] = person.name
+
         displayText(ev, act, person)
         choices = manager.getChoices(ev.choiceTags, persistent.history.personality)
-        persistent.history.refTags[ev.name] = { "action": act.name, "person": person.name, "choice": "none" }
         if choices:
-            choiceResult = getPlayerChoice(ev, act, person, choices)
+            choiceResult = getPlayerChoice(choices)
             persistent.history.refTags[ev.name]["choice"] = choiceResult[0]
             pickEvent(choiceResult[1])
         else:
