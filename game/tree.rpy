@@ -192,9 +192,52 @@ init python:
             frozenset(['huntResult', 'startQuest']),
             'You catch your prey',
             frozenset(['barter', 'life']),
+            frozenset(['spare', 'kill'])
+        ),
+
+        'quest1a': StoryEvent(
+            'quest1a',
+            frozenset(['stage1']),
+            'You are walking down a street when a mysterious man jumps out at you',
+            frozenset([]),
+            frozenset(['noOption']),
+            frozenset(['surprise', 'attack', 'defense'])
+        ),
+
+        'quest1b': StoryEvent(
+            'quest1b',
+            frozenset(['surprise', 'attack', 'defense']),
+            'You side step and parry his attack. He challenges you to a duel, what do you do?',
+            frozenset([]),
+            frozenset(['negotiate', 'fight'])
+        ),
+
+        'quest1c': StoryEvent(
+            'quest1c',
+            frozenset(['huntResult', 'startQuest']),
+            'You catch your prey',
+            frozenset(['barter', 'life']),
             frozenset(['spare', 'kill']),
             frozenset(['endQuest'])
-        )
+        ),
+
+        'qeust1d': StoryEvent(
+            'qeust1d',
+            frozenset(['huntResult', 'startQuest']),
+            'You catch your prey',
+            frozenset(['barter', 'life']),
+            frozenset(['spare', 'kill']),
+            frozenset(['endQuest'])
+        ),
+
+        'qeust1e': StoryEvent(
+            'quest1e',
+            frozenset(['huntResult', 'startQuest']),
+            'You catch your prey',
+            frozenset(['barter', 'life']),
+            frozenset(['spare', 'kill']),
+            frozenset(['endQuest'])
+        ),
     }
 
     actions = [
@@ -236,63 +279,70 @@ init python:
             'I need range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'social': 0.0 },
-            set(['social+'])
+            set([])
         ),
         Choice(
             'arrowPick',
             'I need to be able to fight close range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'aggress': 2 },
-            set(['aggress+'])
+            set([])
         ),
         Choice(
             'handsPick',
             'forget those weapons, i\'m going to use my thumbs',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'aggress': 3},
-            set(['social+'])
+            set([])
         ),
         Choice(
             'bowPick',
             'I need range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'social': 0.0 },
-            set(['social+'])
+            set([])
         ),
         Choice(
             'arrowPick',
             'I need to be able to fight close range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'aggress': -1 },
-            set(['aggress-'])
+            set([])
         ),
         Choice(
             'handsPick',
             'forget those weapons, i\'m going to use my thumbs',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'aggress': -1},
-            set(['social-'])
+            set([])
         ),
         Choice(
             'cutHeadOff',
             'You cut his head off',
             frozenset(['spare', 'kill']),
             { 'aggress': -1 },
-            set(['aggress-'])
+            set([])
         ),
         Choice(
             'spare',
             'You cut his head off',
             frozenset(['spare', 'kill']),
             { 'aggress': -1 },
-            set(['aggress-'])
+            set([])
         ),
         Choice(
             'arrowToKnee',
             'You shoot him in the knee with an arrow',
             frozenset(['spare', 'kill']),
             { 'aggress': -1 },
-            set(['aggress-'])
+            set([])
+        ),
+        Choice(
+            'peacefulFightNegotiation',
+            'You try to talk him out of the fight',
+            frozenset(['peaceful', 'fight', 'negotiation']),
+            { 'aggress': -1 },
+            set(['peaceful', 'negotiation'])
         ),
     ]
 
