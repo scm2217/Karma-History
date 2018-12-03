@@ -70,6 +70,7 @@ init python:
 
 
         def parseTags(self, tags):
+            tags = set(tags)
             for tg in tags:
                 if '$' in tg:
                     tags.remove(tg)
@@ -80,6 +81,7 @@ init python:
                     elif len(tg) == 2:
                         tg = persistent.history.refTags[tg[0][1]]
                     tags.add(tg)
+            return tags
 
 
         def getEvent(self, name):
@@ -87,7 +89,7 @@ init python:
 
 
         def getValidEventNames(self, postTags):
-            self.parseTags(postTags)
+            postTags = self.parseTags(postTags)
             stories = []
             for preTags, names in self.storyByPre.items():
                 if preTags >= postTags:
@@ -96,7 +98,7 @@ init python:
 
 
         def getPerson(self, tags):
-            self.parseTags(tags)
+            tags = self.parseTags(tags)
             people = []
             for superTags, vals in self.people.items():
                 if tags.issubset(superTags):
@@ -108,7 +110,7 @@ init python:
 
 
         def getActionPerson(self, tags):
-            self.parseTags(tags)
+            tags = self.parseTags(tags)
             actions = []
             for superTags, vals in self.actions.items():
                 if tags <= superTags:
@@ -122,11 +124,11 @@ init python:
                 if person:
                     return act, person
             # failed to find any actions with people left
-            return False, False
+            return None, None
 
 
         def getChoices(self, tags, personality):
-            self.parseTags(tags)
+            tags = self.parseTags(tags)
             choices = []
             for superTags, vals in self.choices.items():
                 if tags <= superTags:
@@ -137,7 +139,7 @@ init python:
                 for attr, val in ch.personalityReq.items():
                     if(val < 0 and personality[attr] > val):
                         choices.remove(ch)
-                    elif(val >= 0 and personality[attr] < val):
+                    elif(val > 0 and personality[attr] < val):
                         choices.remove(ch)
             return choices
 
@@ -172,7 +174,7 @@ init python:
         'start1d': StoryEvent(
             'start1d',
             frozenset(['quest3', 'weaponChoice', 'startQuest']),
-            'You realize that you are packing too heavy.',
+            'But you realize that you are packing too heavy.',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['quest4', 'startQuest'])
@@ -181,10 +183,19 @@ init python:
         'start1e': StoryEvent(
             'start1e',
             frozenset(['quest4', 'startQuest']),
-            'You ride into the night to hunting. Your horse breathes heavy while galloping.',
+            'You ride into the night to go hunting. Your horse breathes heavy while galloping.',
             frozenset([]),
             frozenset(['noOption']),
             frozenset(['huntResult', 'startQuest'])
+        ),
+
+        'red1a': StoryEvent(
+            'red1a',
+            frozenset(['quest4', 'startQuest']),
+            'You make your way down to the stables when suddenly a figure in red blocks your way.',
+            frozenset(['redThreat', '$cAlliance']),
+            frozenset(['noOption']),
+            frozenset(['redThreat', 'startQuest'])
         ),
 
         'start1f': StoryEvent(
@@ -223,7 +234,7 @@ init python:
 
         'qeust1d': StoryEvent(
             'qeust1d',
-            frozenset(['huntResult', 'startQuest']),
+            frozenset(['revival']),
             'But then he revives himself and screaming \'The Lord of the Light!\' What do you do?',
             frozenset([]),
             frozenset(['fight', 'options']),
@@ -238,6 +249,8 @@ init python:
             frozenset(['spare', 'kill']),
             frozenset(['endQuest'])
         ),
+
+
     }
 
     actions = [
@@ -254,23 +267,41 @@ init python:
             set(['leader', '$cLocation'])
         ),
         Action(
-            'startQuest',
-            'you sharpen your sword, and ready your bows, preparing for the hunt',
+            'prep',
+            'You sharpen your sword, and ready your bows, preparing for the hunt.',
             frozenset(['prepare', 'hunt']),
             set(['$cPerson'])
         ),
         Action(
-            'startQuest',
-            'Do you want your bow?, or do you want your sword',
+            'weaponChoice',
+            'Do you want your bow, or do you want your sword?',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             set(['$cPerson'])
         ),
         Action(
-            'startQuest',
-            '$cPerson offers to double your current reward if you spare his life',
+            'moneyForLife',
+            '$cPerson offers you a great reward if you spare his life',
             frozenset(['barter', 'life']),
-            set(['banditLead'])
-        )
+            set(['$cPerson'])
+        ),
+        Action(
+            'redStarkThreat',
+            'He exclaims: /"Nothern dog, you will burn with your false tree gods!/"',
+            frozenset(['redThreat', 'Stark']),
+            set(['redpriest'])
+        ),
+        Action(
+            'redLannisterThreat',
+            'He exclaims: /"The lord of light will smite down you and your greedy masters!/"',
+            frozenset(['redThreat', 'Lannister']),
+            set(['redpriest'])
+        ),
+        Action(
+            'redMartellThreat',
+            'He exclaims: /"The sins of a filthy dornishman can only be cleansed by fire!/"',
+            frozenset(['redThreat', 'Martell']),
+            set(['redpriest'])
+        ),
     ]
 
     choices = [
@@ -278,77 +309,56 @@ init python:
             'bowPick',
             'I need range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'social': 0.0 },
+            { 'social': [-5, 0] },
             set([])
         ),
         Choice(
-            'arrowPick',
+            'swordPick',
             'I need to be able to fight close range',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'aggress': 2 },
+            { 'aggress': [0, 0] },
             set([])
         ),
         Choice(
             'handsPick',
-            'forget those weapons, i\'m going to use my thumbs',
+            'Forget those weapons, I\'m going to use my thumbs.',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'aggress': 3},
-            set([])
-        ),
-        Choice(
-            'bowPick',
-            'I need range',
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'social': 0.0 },
-            set([])
-        ),
-        Choice(
-            'arrowPick',
-            'I need to be able to fight close range',
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'aggress': -1 },
-            set([])
-        ),
-        Choice(
-            'handsPick',
-            'forget those weapons, i\'m going to use my thumbs',
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            { 'aggress': -1},
+            { 'aggress': [10, 5] },
             set([])
         ),
         Choice(
             'cutHeadOff',
-            'You cut his head off',
+            'You cut his head off.',
             frozenset(['spare', 'kill']),
-            { 'aggress': -1 },
-            set([])
+            { 'aggress': [0, 5] },
+            set(['killed'])
         ),
         Choice(
             'spare',
-            'You cut his head off',
+            'You let him run for his life.',
             frozenset(['spare', 'kill']),
-            { 'aggress': -1 },
-            set([])
+            { 'aggress': [0, -5], 'nice': [0, 5] },
+            set(['spared'])
         ),
         Choice(
             'arrowToKnee',
-            'You shoot him in the knee with an arrow',
+            'You shoot him in the knee with an arrow.',
             frozenset(['spare', 'kill']),
-            { 'aggress': -1 },
-            set([])
+            { 'aggress': [10, 5] },
+            set(['killed'])
         ),
         Choice(
             'peacefulFightNegotiation',
             'You try to talk him out of the fight',
             frozenset(['peaceful', 'fight', 'negotiation']),
-            { 'aggress': -1 },
+            { 'aggress': [0, -5], 'social': [0, 5] },
             set(['talk'])
         ),
         Choice(
             'aggressiveFightNegotiation',
             'You raise your sword to prepare for the fight',
             frozenset(['aggressive', 'fight', 'negotiation']),
-            { 'aggress': -1 },
+            { 'aggress': [0, 5] },
             set(['prepareToFight'])
         ),
     ]
@@ -359,7 +369,11 @@ init python:
         Person("Oberyn", { 'nice': 10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Oberyn', 'leader', 'Martell', 'Sunspear', 'quest'])),
         Person("The Boulder", { 'nice': -10.0, 'social': 5.0, 'aggress': 10.0 }, frozenset(['The Boulder', 'banditLead'])),
         Person("The Pup", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['The Pup', 'banditLead'])),
+        Person("Thoros of Myr", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Thoros of Myr', 'redpriest'])),
     ]
+
+
+
 
     manager = StoryManager(storyEvents, people, actions, choices)
 
@@ -392,8 +406,10 @@ init python:
 
     def getPlayerChoice(choices):
         # display and retieve choice here
-        optionList = [(ch.content, [ch.name, ch.postTags]) for ch in choices]
+        optionList = [(ch.content, [ch.name, ch.postTags, ch.personalityReq]) for ch in choices]
         playerChoice = menu(optionList)
+        for attr, values in playerChoice[2].items():
+            persistent.history.personality[attr] += values[1]
         return playerChoice
 
 
@@ -401,7 +417,7 @@ init python:
         ev = manager.getEvent(name)
         persistent.history.refTags[ev.name] = { "action": "none", "person": "none", "choice": "none" }
         act, person = None, None
-        if len(ev.actionTags) > 0:
+        if ev.actionTags != set():
             act, person = manager.getActionPerson(ev.actionTags)
             persistent.history.refTags[ev.name]["action"] = act.name
             persistent.history.refTags[ev.name]["person"] = person.name
