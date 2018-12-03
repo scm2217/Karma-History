@@ -2,10 +2,11 @@ init python:
     import random
 
     class StoryEvent(object):
-        def __init__(self, name, pre_conditions, content, tags, postTags=set()):
+        def __init__(self, name, pre_conditions, content, actionTags, choiceTags, postTags=set()):
             self.name = name
             self.pre_conditions = pre_conditions
-            self.tags = tags
+            self.actionTags = actionTags
+            self.choiceTags = choiceTags
             self.content = content
             self.postTags = postTags
 
@@ -68,11 +69,25 @@ init python:
                 self.choices[tags].append(ch)
 
 
+        def parseTags(self, tags):
+            for tg in tags:
+                if '$' in tg:
+                    tags.remove(tg)
+                    tg = tg[1:]
+                    tg = tg.split('.')
+                    if len(tg) == 1:
+                        tg = persistent.history.refTags[tg[0]]
+                    elif len(tg) == 2:
+                        tg = persistent.history.refTags[tg[0][1]]
+                    tags.add(tg)
+
+
         def getEvent(self, name):
             return self.storyEvents[name]
 
 
         def getValidEventNames(self, postTags):
+            self.parseTags(postTags)
             stories = []
             for preTags, names in self.storyByPre.items():
                 if preTags >= postTags:
@@ -81,6 +96,7 @@ init python:
 
 
         def getPerson(self, tags):
+            self.parseTags(tags)
             people = []
             for superTags, vals in self.people.items():
                 if tags.issubset(superTags):
@@ -92,6 +108,7 @@ init python:
 
 
         def getActionPerson(self, tags):
+            self.parseTags(tags)
             actions = []
             for superTags, vals in self.actions.items():
                 if tags <= superTags:
@@ -101,13 +118,7 @@ init python:
             person = None
             random.shuffle(actions)
             for act in actions:
-                personTags = act.personTags
-                for pTag in personTags:
-                    if '$' in pTag:
-                        personTags.remove(pTag)
-                        pTag = persistent.history.refTags[pTag[1:]]
-                        personTags.add(pTag)
-                person = self.getPerson(personTags)
+                person = self.getPerson(act.personTags)
                 if person:
                     return act, person
             # failed to find any actions with people left
@@ -115,6 +126,7 @@ init python:
 
 
         def getChoices(self, tags, personality):
+            self.parseTags(tags)
             choices = []
             for superTags, vals in self.choices.items():
                 if tags <= superTags:
@@ -136,6 +148,7 @@ init python:
             frozenset(),
             'It is a beutiful day in $location',
             frozenset(['chill', 'leader']),
+            frozenset(['none']),
             frozenset(['quest1', 'leader', 'startQuest'])
         ),
 
@@ -144,6 +157,7 @@ init python:
             frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
             'In conversation he offers you a quest',
             frozenset(['quest1', 'startQuest', 'hunt']),
+            frozenset(['none']),
             frozenset(['quest2', 'startQuest'])
         ),
 
@@ -152,6 +166,7 @@ init python:
             frozenset(['quest2', 'startQuest', 'hunt']),
             'You accept the challenge.',
             frozenset(['prepare', 'hunt']),
+            frozenset(['none']),
             frozenset(['quest3', 'startQuest', 'weaponChoice'])
         ),
 
@@ -159,6 +174,7 @@ init python:
             'start1d',
             frozenset(['quest3', 'weaponChoice', 'startQuest']),
             'You realize that you are packing too heavy.',
+            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['quest4', 'startQuest'])
         )
@@ -181,13 +197,13 @@ init python:
             'startQuest',
             'you sharpen your sword, and ready your bows, preparing for the hunt',
             frozenset(['prepare', 'hunt']),
-            set()
+            set(['leader'])
         ),
         Action(
             'startQuest',
             'Do you want your bow?, or do you want your sword',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            set()
+            set(['leader'])
         )
     ]
 
@@ -251,7 +267,12 @@ init python:
         for word in txt.split():
             word = str(word)
             if '$' in word:
-                word = persistent.history.refTags[word[1:]]
+                word = word[1:]
+                word = word.split('.')
+                if len(word) == 1:
+                    word = persistent.history.refTags[word[0]]
+                elif len(word) == 2:
+                    word = persistent.history.refTags[word[0][1]]
             result += word + " "
         result = result[:-1] + '.'
         return result
@@ -266,22 +287,24 @@ init python:
 
     def getPlayerChoice(evf, act, person, choices):
         # display and retieve choice here
-        optionList = [(ch.content, ch.postTags) for ch in choices]
+        optionList = [(ch.content, [ch.name, ch.postTags]) for ch in choices]
         playerChoice = menu(optionList)
         return playerChoice
 
 
     def executeEvent(name):
         ev = manager.getEvent(name)
-        act, person = manager.getActionPerson(ev.tags)
+        act, person = manager.getActionPerson(ev.actionTags)
         if not person:
             renpy.say(None, "We need to account for if there is no valid people for any valid actions")
             return  # temporary fix
         displayText(ev, act, person)
-        choices = manager.getChoices(act.tags, persistent.history.personality)
+        choices = manager.getChoices(ev.choiceTags, persistent.history.personality)
+        persistent.history.refTags[ev.name] = { "action": act.name, "person": person.name, "choice": "none" }
         if choices:
             choiceResult = getPlayerChoice(ev, act, person, choices)
-            pickEvent(choiceResult)
+            persistent.history.refTags[ev.name]["choice"] = choiceResult[0]
+            pickEvent(choiceResult[1])
         else:
             postT = ev.postTags
             pickEvent(postT)
