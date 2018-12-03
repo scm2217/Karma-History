@@ -72,7 +72,7 @@ init 1 python:
         def parseTags(self, tags):
             tags = set(tags)
             for tg in tags:
-                if '$' in tg:
+                if '$' in tg:  # $ tags are meant to be substituted during runtime
                     tags.remove(tg)
                     tg = tg[1:]
                     tg = tg.split('.')
@@ -81,6 +81,10 @@ init 1 python:
                     elif len(tg) == 2:
                         tg = persistent.history.refTags[tg[0][1]]
                     tags.add(tg)
+                if '~' in tg:  # ~ tags are meant to be used as a blocker
+                    k = tg[1:]
+                    if k in persistent.history.refTags:
+                        tags.remove(tg)  # ~ blocker tag is is removed if event condition has been met
             return tags
 
 
@@ -188,6 +192,16 @@ init 3 python:
         return playerChoice
 
 
+# update history data based on post tag commands
+    def updateHistory(postT):
+        for tg in postT:
+            if "#" in tg:
+                k = tg[1:]
+                k = k.split('=')
+                persistent.history.refTags[k[0]] = k[1]
+                postT.remove(tg)
+        return postT
+
     def executeEvent(name):
         ev = manager.getEvent(name)
         print("Event:", ev.name)
@@ -209,6 +223,7 @@ init 3 python:
                 postT |= choiceResult[1]
         if person:
             renpy.hide(person.name)
+        postT = updateHistory(postT)
         pickEvent(postT)
 
 

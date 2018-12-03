@@ -78,7 +78,7 @@ label start:
 
     # calc initial player personality
     menu:
-        "Your family is a minor vassal of house"
+        "Your family is a minor vassal of house:"
 
         "Lannister":
             $persistent.history.personality['nice'] -= 5
