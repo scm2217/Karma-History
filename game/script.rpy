@@ -36,6 +36,10 @@ init python:
     if persistent.history is None:
         persistent.history = PlayerHistory()
 
+    def resetHistory():
+        persistent.history = PlayerHistory()
+
+
 init:
     image Oberyn = "oberynFun.jpg"
     image Eddard = "eddard.jpg"
@@ -67,6 +71,8 @@ label start:
     show eileen happy
 
     # These display lines of dialogue.
+
+    $resetHistory()
 
     "It's game of thrones"
 

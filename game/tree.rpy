@@ -141,14 +141,13 @@ init python:
                         choices.remove(ch)
             return choices
 
-
     storyEvents = {
         'start1': StoryEvent(
             'start1',
             frozenset(),
             'It is a beutiful day in $cLocation',
             frozenset(['chill', 'leader']),
-            frozenset(['none']),
+            frozenset(['noOption']),
             frozenset(['quest1', 'leader', 'startQuest'])
         ),
 
@@ -157,7 +156,7 @@ init python:
             frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
             'In conversation he offers you a quest',
             frozenset(['quest1', 'startQuest', 'hunt']),
-            frozenset(['none']),
+            frozenset(['noOption']),
             frozenset(['quest2', 'startQuest'])
         ),
 
@@ -166,7 +165,7 @@ init python:
             frozenset(['quest2', 'startQuest', 'hunt']),
             'You accept the challenge.',
             frozenset(['prepare', 'hunt']),
-            frozenset(['none']),
+            frozenset(['noOption']),
             frozenset(['quest3', 'startQuest', 'weaponChoice'])
         ),
 
@@ -177,6 +176,24 @@ init python:
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             frozenset(['quest4', 'startQuest'])
+        ),
+
+        'start1e': StoryEvent(
+            'start1e',
+            frozenset(['quest4', 'startQuest']),
+            'You ride into the night to hunting. Your horse breathes heavy while galloping.',
+            frozenset([]),
+            frozenset(['noOption']),
+            frozenset(['huntResult', 'startQuest'])
+        ),
+
+        'start1f': StoryEvent(
+            'start1f',
+            frozenset(['huntResult', 'startQuest']),
+            'You catch your prey',
+            frozenset(['barter', 'life']),
+            frozenset(['spare', 'kill']),
+            frozenset(['endQuest'])
         )
     }
 
@@ -197,13 +214,19 @@ init python:
             'startQuest',
             'you sharpen your sword, and ready your bows, preparing for the hunt',
             frozenset(['prepare', 'hunt']),
-            set(['leader'])
+            set(['$cPerson'])
         ),
         Action(
             'startQuest',
             'Do you want your bow?, or do you want your sword',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            set(['leader'])
+            set(['$cPerson'])
+        ),
+        Action(
+            'startQuest',
+            '$cPerson offers to double your current reward if you spare his life',
+            frozenset(['barter', 'life']),
+            set(['$cPerson'])
         )
     ]
 
@@ -249,7 +272,28 @@ init python:
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             { 'aggress': -1},
             set(['social-'])
-        )
+        ),
+        Choice(
+            'cutHeadOff',
+            'You cut his head off',
+            frozenset(['spare', 'kill']),
+            { 'aggress': -1 },
+            set(['aggress-'])
+        ),
+        Choice(
+            'spare',
+            'You cut his head off',
+            frozenset(['spare', 'kill']),
+            { 'aggress': -1 },
+            set(['aggress-'])
+        ),
+        Choice(
+            'arrowToKnee',
+            'You shoot him in the knee with an arrow',
+            frozenset(['spare', 'kill']),
+            { 'aggress': -1 },
+            set(['aggress-'])
+        ),
     ]
 
     people = [
@@ -306,14 +350,14 @@ init python:
             persistent.history.refTags[ev.name]["person"] = person.name
 
         displayText(ev, act, person)
+        postT = set(ev.postTags)
         choices = manager.getChoices(ev.choiceTags, persistent.history.personality)
         if choices:
             choiceResult = getPlayerChoice(choices)
             persistent.history.refTags[ev.name]["choice"] = choiceResult[0]
-            pickEvent(choiceResult[1])
-        else:
-            postT = ev.postTags
-            pickEvent(postT)
+            if choiceResult[1] != set():
+                postT |= choiceResult[1]
+        pickEvent(postT)
 
 
     def pickEvent(post):
