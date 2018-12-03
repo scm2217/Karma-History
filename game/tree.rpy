@@ -269,7 +269,7 @@ init python:
             'startQuest',
             '$cPerson offers to double your current reward if you spare his life',
             frozenset(['barter', 'life']),
-            set(['$cPerson'])
+            set(['banditLead'])
         )
     ]
 
@@ -350,8 +350,8 @@ init python:
         Person("Tywin", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Tywin', 'leader', 'Lannister', 'Lannisport', 'quest'])),
         Person("Eddard", { 'nice': 10.0, 'social': -5.0, 'aggress': 0.0 }, frozenset(['Eddard', 'leader', 'Stark', 'Winterfell', 'quest'])),
         Person("Oberyn", { 'nice': 10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Oberyn', 'leader', 'Martell', 'Sunspear', 'quest'])),
-        Person("The Bolder", { 'nice': -10.0, 'social': 5.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
-        Person("The Pup", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
+        Person("The Boulder", { 'nice': -10.0, 'social': 5.0, 'aggress': 10.0 }, frozenset(['The Boulder', 'banditLead'])),
+        Person("The Pup", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['The Pup', 'banditLead'])),
     ]
 
     manager = StoryManager(storyEvents, people, actions, choices)
@@ -407,6 +407,8 @@ init python:
             persistent.history.refTags[ev.name]["choice"] = choiceResult[0]
             if choiceResult[1] != set():
                 postT |= choiceResult[1]
+        if person:
+            renpy.hide(person.name)
         pickEvent(postT)
 
 
