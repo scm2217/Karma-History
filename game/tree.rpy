@@ -75,7 +75,7 @@ init python:
         def getValidEventNames(self, postTags):
             stories = []
             for preTags, names in self.storyByPre.items():
-                if preTags.issuperset(postTags):
+                if preTags >= postTags:
                     stories.extend(names)
             return stories
 
@@ -94,7 +94,7 @@ init python:
         def getActionPerson(self, tags):
             actions = []
             for superTags, vals in self.actions.items():
-                if tags.issubset(superTags):
+                if tags <= superTags:
                     actions.extend(vals)
 
             # find a valid person action pair
@@ -117,7 +117,7 @@ init python:
         def getChoices(self, tags, personality):
             choices = []
             for superTags, vals in self.choices.items():
-                if tags.issubset(superTags):
+                if tags <= superTags:
                     choices.extend(vals)
 
             # remove all choices that player cannot use
@@ -132,7 +132,7 @@ init python:
 
     storyEvents = {
         'start1': StoryEvent(
-            'start',
+            'start1',
             frozenset(),
             'It is a beutiful day in $location',
             frozenset(['chill', 'leader']),
@@ -140,7 +140,7 @@ init python:
         ),
 
         'start1b': StoryEvent(
-            'start',
+            'start1b',
             frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
             'In conversation he offers you a quest',
             frozenset(['quest1', 'startQuest', 'hunt']),
@@ -148,26 +148,19 @@ init python:
         ),
 
         'start1c': StoryEvent(
-            'start',
+            'start1c',
             frozenset(['quest2', 'startQuest', 'hunt']),
-            'Do you want to hunt some bandits?',
-            frozenset(),
-            frozenset(['quest3', 'startQuest'])
+            'You accept the challenge.',
+            frozenset(['prepare', 'hunt']),
+            frozenset(['quest3', 'startQuest', 'weaponChoice'])
         ),
 
         'start1d': StoryEvent(
-            'start',
-            frozenset(['quest3', 'startQuest', 'hunt']),
-            'You accept the challenge.',
-            frozenset(['prepare', 'hunt']),
-            frozenset(['quest4', 'startQuest', 'weaponChoice'])
-        ),
-        'start1e': StoryEvent(
-            'start',
-            frozenset(['startQuest ', 'quest4', 'weaponChoice']),
+            'start1d',
+            frozenset(['quest3', 'weaponChoice', 'startQuest']),
             'You realize that you are packing too heavy.',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            frozenset(['quest5', 'startQuest'])
+            frozenset(['quest4', 'startQuest'])
         )
     }
 
@@ -192,7 +185,7 @@ init python:
         ),
         Action(
             'startQuest',
-            'Do yu want your bow?, or do you want your sword',
+            'Do you want your bow?, or do you want your sword',
             frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
             set()
         )
@@ -250,7 +243,6 @@ init python:
         Person("The Bolder", { 'nice': -10.0, 'social': 5.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
         Person("The Pup", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['banditLead'])),
     ]
-
 
     manager = StoryManager(storyEvents, people, actions, choices)
 
