@@ -146,7 +146,7 @@ init python:
         'start1': StoryEvent(
             'start1',
             frozenset(),
-            'It is a beutiful day in $location',
+            'It is a beutiful day in $cLocation',
             frozenset(['chill', 'leader']),
             frozenset(['none']),
             frozenset(['quest1', 'leader', 'startQuest'])
@@ -185,13 +185,13 @@ init python:
             'relaxLeader',
             'You\'re kickin it with $cPerson',
             frozenset(['chill', 'leader']),
-            set(['leader', '$location'])
+            set(['leader', '$cLocation'])
         ),
         Action(
             'startQuest',
             '$cPerson requets for you to hunt bandits in exchange for gold',
             frozenset(['quest1', 'startQuest', 'hunt']),
-            set(['leader', '$location'])
+            set(['leader', '$cLocation'])
         ),
         Action(
             'startQuest',
@@ -280,6 +280,7 @@ init python:
 
     def displayText(ev, act, person):
         # can use substitutions to make test better very basic for now
+        renpy.show(person.name)
         persistent.history.refTags['cPerson'] = person.name
         txt = parseText(ev.content) + " " + parseText(act.content)
         renpy.say(person.name, txt)

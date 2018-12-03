@@ -14,8 +14,8 @@ python early:
             }
             self.stage = 'stage1'
             self.refTags = {
-                'location': '',
-                'alliance': '',
+                'cLocation': '',
+                'cAlliance': '',
                 'cPerson': ''
             }
 
@@ -36,6 +36,13 @@ init python:
     if persistent.history is None:
         persistent.history = PlayerHistory()
 
+init:
+    image Oberyn = "oberynFun.jpg"
+    image Eddard = "eddard.jpg"
+    image Tywin = "tywin.png"
+    image bg Lannister = "lannister.jpg"
+    image bg Martell = "martell.jpg"
+    image bg Stark = "stark.jpg"
 
 # Declare characters used by this game. The color argument colorizes the
 # name of the character.
@@ -61,7 +68,7 @@ label start:
 
     # These display lines of dialogue.
 
-    "Background intro to the world"
+    "It's game of thrones"
 
     # get player name
     $persistent.history.name = renpy.input("Pick a name:").strip()
@@ -74,20 +81,23 @@ label start:
             $persistent.history.personality['nice'] -= 5
             $persistent.history.personality['social'] += 5
             $persistent.history.personality['aggress'] += 5
-            $persistent.history.alliance = "Lannister"
-            $persistent.history.refTags['location'] = "Lannisport"
+            $persistent.history.refTags['cAlliance'] = "Lannister"
+            $persistent.history.refTags['cLocation'] = "Lannisport"
+            scene bg Lannister
 
         "Stark":
             $persistent.history.personality['nice'] += 10
             $persistent.history.personality['social'] -= 5
-            $persistent.history.alliance = "Stark"
-            $persistent.history.refTags['location'] = "Winterfell"
+            $persistent.history.refTags['cAlliance'] = "Stark"
+            $persistent.history.refTags['cLocation'] = "Winterfell"
+            scene bg Stark
 
         "Martell":
             $persistent.history.personality['social'] += 5
             $persistent.history.personality['aggress'] -= 10
-            $persistent.history.alliance = "Martell"
-            $persistent.history.refTags['location'] = "Sunspear"
+            $persistent.history.refTags['cAlliance'] = "Martell"
+            $persistent.history.refTags['cLocation'] = "Sunspear"
+            scene bg Martell
 
     menu:
         "As a noble born child you:"
