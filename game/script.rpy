@@ -32,7 +32,7 @@ python early:
                 return False
             return True
 
-init python:
+init 0 python:
     if persistent.history is None:
         persistent.history = PlayerHistory()
 
