@@ -95,11 +95,15 @@ init 1 python:
         def getValidEventNames(self, postTags):
             postTags = self.parseTags(postTags)
             stories = []
-            print("sotry by pre", self.storyByPre)
             for preTags, names in self.storyByPre.items():
-                print("EVENT COMP", postTags, preTags)
                 if preTags >= postTags:
                     stories.extend(names)
+            if not stories:
+                for preTags, names in self.storyByPre.items():
+                    if preTags >= frozenset([persistent.history.stage]):
+                        # newEvent = [name for name in names if name not in self.storyEvents]
+                        stories.extend(names)
+                        # stories.extend(newEvent)
             return stories
 
 
