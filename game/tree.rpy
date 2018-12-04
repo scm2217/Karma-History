@@ -95,7 +95,9 @@ init 1 python:
         def getValidEventNames(self, postTags):
             postTags = self.parseTags(postTags)
             stories = []
+            print("sotry by pre", self.storyByPre)
             for preTags, names in self.storyByPre.items():
+                print("EVENT COMP", postTags, preTags)
                 if preTags >= postTags:
                     stories.extend(names)
             return stories
@@ -157,7 +159,6 @@ init 3 python:
 
     def parseText(txt):
         result = ""
-        print(txt, persistent.history.refTags)
         for word in txt.split():
             word = str(word)
             if '$' in word:
@@ -215,7 +216,9 @@ init 3 python:
 
         displayText(ev, act, person)
         postT = set(ev.postTags)
-        choices = manager.getChoices(ev.choiceTags, persistent.history.personality)
+        choices = None
+        if ev.choiceTags != set([]):
+            choices = manager.getChoices(ev.choiceTags, persistent.history.personality)
         if choices:
             choiceResult = getPlayerChoice(choices)
             persistent.history.refTags[ev.name]["choice"] = choiceResult[0]
@@ -224,6 +227,7 @@ init 3 python:
         if person:
             renpy.hide(person.name)
         postT = updateHistory(postT)
+        print("Post Tags:", postT)
         pickEvent(postT)
 
 
@@ -235,8 +239,10 @@ init 3 python:
             validEvents = manager.getValidEventNames(post)
         # pick random event matchup pre-con
         else:
+            print("Picking random event at current stage")
             validEvents = manager.getValidEventNames(persistent.history.stage)
 
+        print("Possible Next Events:", validEvents)
         if(validEvents):
             executeEvent(random.choice(validEvents))
 
