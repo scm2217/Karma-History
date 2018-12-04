@@ -228,7 +228,7 @@ init 3 python:
             renpy.hide(person.name)
         postT = updateHistory(postT)
         print("Post Tags:", postT)
-        pickEvent(postT)
+        return postT
 
 
     def pickEvent(post):
@@ -244,8 +244,15 @@ init 3 python:
 
         print("Possible Next Events:", validEvents)
         if(validEvents):
-            executeEvent(random.choice(validEvents))
+            return random.choice(validEvents)
+
+    postTags = None
 
 label tree_start:
     "Sometime later..."
-    $executeEvent('start1')
+    $postTags = executeEvent('start1')
+    jump tree_event
+
+label tree_event:
+    $postTags = executeEvent(pickEvent(postTags))
+    jump tree_event
