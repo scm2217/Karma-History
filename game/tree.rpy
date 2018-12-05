@@ -253,10 +253,9 @@ init 3 python:
             validEvents = manager.getValidEventNames(persistent.history.stage)
 
         print("Possible Next Events:", validEvents)
-        if len(validEvents) > 1:
+        if validEvents:
             return random.choice(validEvents)
-        else:
-            return validEvents
+
 
     nextTags = None
 
