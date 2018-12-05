@@ -218,6 +218,18 @@ init 2 python:
                 ),
             ],
 
+        'fireReject':
+            [
+                StoryEvent(
+                    'fireReject',
+                    frozenset(['reject', 'firefight']),
+                    'You strike your $weapon.choice through $cPerson \'s face before he can react.',
+                    frozenset([]),
+                    frozenset([]),
+                    frozenset(['revival', 'dead'])
+                ),
+            ],
+
         'fireDead':
             [
                 StoryEvent(
@@ -518,24 +530,10 @@ init 2 python:
         ),
         Choice(
             'join',
-            'You pee in your pants and run the other way.',
+            '"YES! I WILL NO LONGER BE A $cAlliance PAWN!"',
             frozenset(['reject', 'join']),
             { 'social': [0, -5] },
-            set(['accept'])
-        ),
-        Choice(
-            'join',
-            'You scramble to escape and run the other way.',
-            frozenset(['reject', 'join']),
-            { 'social': [0, -5] },
-            set(['accept'])
-        ),
-        Choice(
-            'join',
-            'You slowly back away, and then sprint the other way as fast as you can',
-            frozenset(['reject', 'join']),
-            { 'social': [0, -5] },
-            set(['accept'])
+            set(['join'])
         ),
         Choice(
             'reject',
