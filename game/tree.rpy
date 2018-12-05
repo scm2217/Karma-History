@@ -41,7 +41,7 @@ init 1 python:
 
             self.storyByPre = {}
             for name, story in storyEvents.items():
-                preCons = story.pre_conditions
+                preCons = story[0].pre_conditions
                 if preCons not in self.storyByPre:
                     self.storyByPre[preCons] = []
                 self.storyByPre[preCons].append(name)
@@ -79,7 +79,7 @@ init 1 python:
                     if len(tg) == 1:
                         tg = persistent.history.refTags[tg[0]]
                     elif len(tg) == 2:
-                        tg = persistent.history.refTags[tg[0][1]]
+                        tg = persistent.history.refTags[tg[0]][tg[1]]
                     tags.add(tg)
                 if '~' in tg:  # ~ tags are meant to be used as a blocker
                     k = tg[1:]
@@ -89,7 +89,7 @@ init 1 python:
 
 
         def getEvent(self, name):
-            return self.storyEvents[name]
+            return random.choice(self.storyEvents[name])
 
 
         def getValidEventNames(self, postTags):
@@ -101,9 +101,9 @@ init 1 python:
             if not stories:
                 for preTags, names in self.storyByPre.items():
                     if preTags >= frozenset([persistent.history.stage]):
-                        # newEvent = [name for name in names if name not in self.storyEvents]
-                        stories.extend(names)
-                        # stories.extend(newEvent)
+                        newEvent = [name for name in names if name not in persistent.history.refTags]
+                        # stories.extend(names)
+                        stories.extend(newEvent)
             return stories
 
 
@@ -171,7 +171,7 @@ init 3 python:
                 if len(word) == 1:
                     word = persistent.history.refTags[word[0]]
                 elif len(word) == 2:
-                    word = persistent.history.refTags[word[0][1]]
+                    word = persistent.history.refTags[word[0]][word[1]]
             result += word + " "
         result = result[:-1] + '.'
         return result
@@ -209,7 +209,8 @@ init 3 python:
 
     def executeEvent(name):
         ev = manager.getEvent(name)
-        print("Event:", ev.name)
+        print("Event:", ev.name, ev.pre_conditions, ev.postTags)
+        print("History:", persistent.history.refTags)
         persistent.history.refTags[ev.name] = { "action": "none", "person": "none", "choice": "none" }
         act, person = None, None
         if ev.actionTags != set([]):
@@ -250,13 +251,13 @@ init 3 python:
         if(validEvents):
             return random.choice(validEvents)
 
-    postTags = None
+    nextTags = None
 
 label tree_start:
     "Sometime later..."
-    $postTags = executeEvent('start1')
+    $nextTags = executeEvent('start1')
     jump tree_event
 
 label tree_event:
-    $postTags = executeEvent(pickEvent(postTags))
+    $nextTags = executeEvent(pickEvent(nextTags))
     jump tree_event

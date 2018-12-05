@@ -1,226 +1,295 @@
 init 2 python:
 
     storyEvents = {
-        'start1': StoryEvent(
-            'start1',
-            frozenset(),
-            'It is a beutiful day in $cLocation',
-            frozenset(['chill', 'leader']),
-            frozenset(['noOption']),
-            frozenset(['quest1', 'leader', 'startQuest'])
-        ),
+        'start1':
+            [
+                StoryEvent(
+                    'start1',
+                    frozenset(),
+                    'It is a beutiful day in $cLocation',
+                    frozenset(['chill', 'leader']),
+                    frozenset(['noOption']),
+                    frozenset(['quest1', 'leader', 'startQuest'])
+                )
+            ],
 
-        'start1b': StoryEvent(
-            'start1b',
-            frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
-            'In conversation he offers you a quest',
-            frozenset(['quest1', 'startQuest', 'hunt']),
-            frozenset(['noOption']),
-            frozenset(['quest3', 'startQuest'])
-        ),
+        'start1a':
+            [
+                StoryEvent(
+                    'start1a',
+                    frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
+                    'In conversation he offers you a quest',
+                    frozenset(['quest1', 'startQuest', 'hunt']),
+                    frozenset(['noOption']),
+                    frozenset(['quest3', 'startQuest'])
+                ),
+                StoryEvent(
+                    'start1a',
+                    frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
+                    'While joking about the good old days, $cPerson leans in to ask you something',
+                    frozenset(['quest1', 'startQuest', 'hunt']),
+                    frozenset(['agree']),
+                    frozenset(['quest3', 'startQuest'])
+                )
+            ],
 
+        'weapon':
+            [
+                StoryEvent(
+                    'weapon',
+                    frozenset(['quest3', 'weaponChoice', 'startQuest']),
+                    'But you realize that you are packing too heavy.',
+                    frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+                    frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+                    frozenset(['quest4', 'startQuest'])
+                ),
+                StoryEvent(
+                    'weapon',
+                    frozenset(['quest3', 'weaponChoice', 'startQuest']),
+                    'You lift the bag, the weapons clank together. You realize you must travel light for stealth',
+                    frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+                    frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
+                    frozenset(['quest4', 'startQuest'])
+                )
+            ],
 
-        'start1b.b': StoryEvent(
-            'start1b.b',
-            frozenset(['quest1', 'leader', 'startQuest', 'hunt']),
-            'While joking about the good old days, $cPerson leans in to ask you something',
-            frozenset(['quest1', 'startQuest', 'hunt']),
-            frozenset(['agree']),
-            frozenset(['quest3', 'startQuest'])
-        ),
+        'trans1a':
+            [
+                StoryEvent(
+                    'trans1a',
+                    frozenset(['quest4', 'startQuest']),
+                    'You ride into the night to go hunting. Your horse breathes heavy while galloping.',
+                    frozenset([]),
+                    frozenset(['noOption']),
+                    frozenset(['huntResult', 'startQuest'])
+                ),
 
+                StoryEvent(
+                    'trans1a',
+                    frozenset(['quest4', 'startQuest']),
+                    'You start making your way to your target.',
+                    frozenset([]),
+                    frozenset(['noOption']),
+                    frozenset(['huntResult', 'startQuest'])
+                ),
 
-        'start1d.d': StoryEvent(
-            'start1d.d',
-            frozenset(['quest3', 'weaponChoice', 'startQuest']),
-            'But you realize that you are packing too heavy.',
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            frozenset(['quest4', 'startQuest'])
-        ),
+                StoryEvent(
+                    'trans1a',
+                    frozenset(['quest4', 'startQuest']),
+                    'You make your way down to the stables when suddenly a figure in red blocks your way.',
+                    frozenset(['redThreat', '$cAlliance']),
+                    frozenset(['noOption']),
+                    frozenset(['negotiate', 'fight'])
+                ),
+            ],
 
-        'start1d1': StoryEvent(
-            'start1d1',
-            frozenset(['quest3', 'weaponChoice', 'startQuest']),
-            'You lift the bag, the weapons clank together. You realize you must travel light for stealth',
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            frozenset(['question', 'weaponChoice', 'bow', 'arrow']),
-            frozenset(['quest4', 'startQuest'])
-        ),
+        'bandit1a':
+            [
+                StoryEvent(
+                    'bandit1a',
+                    frozenset(['huntResult', 'startQuest']),
+                    'You quickly find the brigands, and their leader approaches you',
+                    frozenset(['barter', 'life']),
+                    frozenset(['spare', 'kill'])
+                ),
 
-        'start1e2': StoryEvent(
-            'start1e2',
-            frozenset(['quest4', 'startQuest']),
-            'You ride into the night to go hunting. Your horse breathes heavy while galloping.',
-            frozenset([]),
-            frozenset(['noOption']),
-            frozenset(['huntResult', 'startQuest'])
-        ),
+                StoryEvent(
+                    'bandit1a',
+                    frozenset(['huntResult', 'startQuest']),
+                    'You catch your prey',
+                    frozenset(['barter', 'life']),
+                    frozenset(['spare', 'kill']),
+                    frozenset(['endQuest'])
+                ),
+            ],
 
-        'start1e1': StoryEvent(
-            'start1e1',
-            frozenset(['quest4', 'startQuest']),
-            'You start making your way to your target.',
-            frozenset([]),
-            frozenset(['noOption']),
-            frozenset(['huntResult', 'startQuest'])
-        ),
+        'surp1a':
+            [
+                StoryEvent(
+                    'surp1a',
+                    frozenset(['stage1']),
+                    'You are walking down a street when a mysterious man jumps out at you',
+                    frozenset([]),
+                    frozenset(['noOption']),
+                    frozenset(['surprise', 'attack', 'defense'])
+                ),
+            ],
 
-        'red1a': StoryEvent(
-            'red1a',
-            frozenset(['quest4', 'startQuest']),
-            'You make your way down to the stables when suddenly a figure in red blocks your way.',
-            frozenset(['redThreat', '$cAlliance']),
-            frozenset(['noOption']),
-            frozenset(['negotiate', 'fight'])
-        ),
+        'nego1a':
+            [
+                StoryEvent(
+                    'nego1a',
+                    frozenset(['surprise', 'attack', 'defense']),
+                    'You side step and parry his attack. He challenges you to a duel, what do you do?',
+                    frozenset([]),
+                    frozenset(['negotiate', 'fight'])
+                ),
 
-        'start1f': StoryEvent(
-            'start1f',
-            frozenset(['huntResult', 'startQuest']),
-            'You quickly find the brigands, and their leader approaches you',
-            frozenset(['barter', 'life']),
-            frozenset(['spare', 'kill'])
-        ),
+                StoryEvent(
+                    'nego1a',
+                    frozenset(['surprise', 'attack', 'defense']),
+                    'You side step and parry his attack. He challenges you to a duel, what do you do?',
+                    frozenset([]),
+                    frozenset(['negotiate', 'fight'])
+                ),
+            ],
 
-        'quest1a': StoryEvent(
-            'quest1a',
-            frozenset(['stage1']),
-            'You are walking down a street when a mysterious man jumps out at you',
-            frozenset([]),
-            frozenset(['noOption']),
-            frozenset(['surprise', 'attack', 'defense'])
-        ),
+        'fire1a':
+            [
+                StoryEvent(
+                    'fire1a',
+                    frozenset(['negotiate', 'fight', 'prepareToFight']),
+                    'You lunge at his heart, he takes it and dies',
+                    frozenset([]),
+                    frozenset(['noOption']),
+                    frozenset(['revival', 'first'])
+                ),
+            ],
 
-        'quest1b': StoryEvent(
-            'quest1b',
-            frozenset(['surprise', 'attack', 'defense']),
-            'You side step and parry his attack. He challenges you to a duel, what do you do?',
-            frozenset([]),
-            frozenset(['negotiate', 'fight'])
-        ),
+        'fire1b':
+            [
+                StoryEvent(
+                    'fire1b',
+                    frozenset(['negotiate', 'fight', 'prepareToFight']),
+                    'You lunge at his heart, he takes it and dies',
+                    frozenset([]),
+                    frozenset(['noOption']),
+                    frozenset(['revival', 'first'])
+                ),
+            ],
 
-        'quest1c': StoryEvent(
-            'quest1c',
-            frozenset(['negotiate', 'fight', 'prepareToFight']),
-            'You lunge at his heart, he takes it and dies',
-            frozenset([]),
-            frozenset(['noOption']),
-            frozenset(['revival', 'first'])
-        ),
+        'fire1c':
+            [
+                StoryEvent(
+                    'fire1c',
+                    frozenset(['revival', 'first']),
+                    'But then he revives himself and screams \'The Lord of the Light!\' What do you do?',
+                    frozenset([]),
+                    frozenset(['fight', 'options']),
+                    frozenset(['revival'])
+                ),
+            ],
 
-        'qeust1d': StoryEvent(
-            'qeust1d',
-            frozenset(['revival', 'first']),
-            'But then he revives himself and screams \'The Lord of the Light!\' What do you do?',
-            frozenset([]),
-            frozenset(['fight', 'options']),
-            frozenset(['revival'])
-        ),
-        'qeust1e1': StoryEvent(
-            'quest1e1',
-            frozenset(['huntResult', 'startQuest']),
-            'You catch your prey',
-            frozenset(['barter', 'life']),
-            frozenset(['spare', 'kill']),
-            frozenset(['endQuest'])
-        ),
-        'qeust1e2': StoryEvent(
-            'quest1e2',
-            frozenset(['huntResult', 'startQuest']),
-            'Noticing your target, on the move, you pounce from above',
-            frozenset(['barter', 'life']),
-            frozenset(['spare', 'kill']),
-            frozenset(['endQuest'])
-        ),
-        'firefight1': StoryEvent(
-            'firefight1',
-            frozenset(['revival', 'norm']),
-            'He gets up again. "FOOL! You can never hope to kill me!"',
-            frozenset([]),
-            frozenset(['fight', 'options']),
-            frozenset(['revival'])
-        ),
-        'firefight2': StoryEvent(
-            'firefight2',
-            frozenset(['revival', 'norm']),
-            'He gets up again. "Stop wasting your time, I cannot be struck down by a nonbeliever!"',
-            frozenset([]),
-            frozenset(['fight', 'options']),
-            frozenset(['revival'])
-        ),
-        'firefight3': StoryEvent(
-            'firefight3',
-            frozenset(['revival', 'norm']),
-            'He gets up again. "I cannot lose so long as the Lord of the light is by my side!"',
-            frozenset([]),
-            frozenset(['fight', 'options']),
-            frozenset(['revival'])
-        ),
-        'firefightJoin1': StoryEvent(
-            'firefightJoin1',
-            frozenset(['revival', 'norm']),
-            'This time $cPerson pauses. "Maybe you are worthy. You have seen my power, will you renounce your false leaders and join the lord of light?"',
-            frozenset([]),
-            frozenset(['join', 'reject']),
-            frozenset(['firefight'])
-        ),
-        'firefightJoin2': StoryEvent(
-            'firefightJoin2',
-            frozenset(['join', 'firefight']),
-            'You pledge yourself to the lord of light and renounce the $cAlliance .',
-            frozenset([]),
-            frozenset([]),
-            frozenset(['endQuest'])
-        ),
-        'firefightDead': StoryEvent(
-            'firefightDead',
-            frozenset(['revival', 'crit', 'dead']),
-            'The foul fire heathen finally falls to your blade, his lifeless head rolling on the ground.',
-            frozenset([]),
-            frozenset([]),
-            frozenset(['endQuest'])
-        ),
-        'end1': StoryEvent(
-            'end1',
-            frozenset(['endQuest', 'crit']),
-            'You return to $cLocation .',
-            frozenset([]),
-            frozenset([]),
-            frozenset([])
-        ),
-        'pastDeed1': StoryEvent(
-            'pastDeed1',
-            frozenset(['stage1', 'pastDeed' '~quest1e1']),
-            'As you walk down through a forest foraging for mushrooms, a shadowy figure emerges',
-            frozenset([]),
-            frozenset(['noOptions']),
-            frozenset(['pastDeed', 'approach'])
-        ),
-        'pastDeed2': StoryEvent(
-            'pastDeed',
-            frozenset(['pastDeed' 'approach']),
-            'They start packing slowly towards you, moving more and more quickly.',
-            frozenset([]),
-            frozenset(['noOptions']),
-            frozenset(['$quest1e1.choice', 'pastDeed'])
-        ),
-        'revenge': StoryEvent(
-            'end1',
-            frozenset(['cutHeadOff', 'pastDeed']),
-            'The figure pulls a sword and dashes toward you. You dodge and counter, cutting of their hood.',
-            frozenset(['enemy', 'revenge', 'reveal']),
-            frozenset([]),
-            frozenset(['end'])
-        ),
-        'friend': StoryEvent(
-            'end1',
-            frozenset(['spareLife', 'pastDeed']),
-            'The figure pulls down their hood revealing themselves to be $quest1e1.person',
-            frozenset(['thanks', 'spareLife']),
-            frozenset([]),
-            frozenset(['end'])
-        ),
+        'fireBat1':
+            [
+                StoryEvent(
+                    'fireBat1',
+                    frozenset(['revival', 'norm']),
+                    'He gets up again. "FOOL! You can never hope to kill me!"',
+                    frozenset([]),
+                    frozenset(['fight', 'options']),
+                    frozenset(['revival'])
+                ),
+                StoryEvent(
+                    'fireBat1',
+                    frozenset(['revival', 'norm']),
+                    'He gets up again. "Stop wasting your time, I cannot be struck down by a nonbeliever!"',
+                    frozenset([]),
+                    frozenset(['fight', 'options']),
+                    frozenset(['revival'])
+                ),
+                StoryEvent(
+                    'fireBat1',
+                    frozenset(['revival', 'norm']),
+                    'He gets up again. "I cannot lose so long as the Lord of the light is by my side!"',
+                    frozenset([]),
+                    frozenset(['fight', 'options']),
+                    frozenset(['revival'])
+                ),
+                StoryEvent(
+                    'fireBat1',
+                    frozenset(['revival', 'norm']),
+                    'This time $cPerson pauses. "Maybe you are worthy. You have seen my power, will you renounce your false leaders and join the lord of light?"',
+                    frozenset([]),
+                    frozenset(['join', 'reject']),
+                    frozenset(['firefight'])
+                ),
+            ],
+
+        'fireJoin':
+            [
+                StoryEvent(
+                    'fireJoin',
+                    frozenset(['join', 'firefight']),
+                    'You pledge yourself to the lord of light and renounce the $cAlliance s.',
+                    frozenset([]),
+                    frozenset([]),
+                    frozenset(['endQuest'])
+                ),
+            ],
+
+        'fireDead':
+            [
+                StoryEvent(
+                    'fireDead',
+                    frozenset(['revival', 'crit', 'dead']),
+                    'The foul fire heathen finally falls to your blade, his lifeless head rolling on the ground.',
+                    frozenset([]),
+                    frozenset([]),
+                    frozenset(['endQuest'])
+                ),
+            ],
+
+        'passDeed1':
+            [
+                StoryEvent(
+                    'pastDeed1',
+                    frozenset(['stage1', 'pastDeed' '~bandit1a']),
+                    'As you walk down through a forest foraging for mushrooms, a shadowy figure emerges',
+                    frozenset([]),
+                    frozenset(['noOptions']),
+                    frozenset(['pastDeed2', 'approach'])
+                ),
+            ],
+
+        'passDeed2':
+            [
+                StoryEvent(
+                    'pastDeed2',
+                    frozenset(['pastDeed2', 'approach']),
+                    'They start walking slowly towards you, moving more and more quickly.',
+                    frozenset([]),
+                    frozenset(['noOptions']),
+                    frozenset(['$bandit1a.choice', 'pastDeed'])
+                ),
+            ],
+
+        'friend':
+            [
+                StoryEvent(
+                    'firend',
+                    frozenset(['spareLife', 'pastDeed']),
+                    'The figure pulls down their hood revealing themselves to be $bandit1a.person',
+                    frozenset(['thanks', 'spareLife']),
+                    frozenset([]),
+                    frozenset(['end'])
+                ),
+            ],
+
+        'revenge':
+            [
+                StoryEvent(
+                    'revenge',
+                    frozenset(['cutHeadOff', 'pastDeed']),
+                    'The figure pulls a sword and dashes toward you. You dodge and counter, cutting of their hood.',
+                    frozenset(['enemy', 'revenge', 'reveal']),
+                    frozenset([]),
+                    frozenset(['end'])
+                ),
+            ],
+
+        'end1':
+            [
+                StoryEvent(
+                    'end1',
+                    frozenset(['endQuest', 'crit']),
+                    'You return to $cLocation .',
+                    frozenset([]),
+                    frozenset([]),
+                    frozenset([])
+                ),
+            ],
+
     }
 
     actions = [
@@ -322,15 +391,15 @@ init 2 python:
         ),
         Action(
             'revengeReveal',
-            'Hello, my name is $person , you killed my father $quest1e1.person , prepare to die!' ,
+            'Hello, my name is $person , you killed my father $bandit1a.person , prepare to die!' ,
             frozenset(['enemy', 'revenge', 'reveal']),
-            set(['$quest1e1.person child'])
+            set(['$bandit1a.person child'])
         ),
         Action(
             'freindReveal',
-            'It is $quest1e1.person , who thanks you for sparing their life and offers their resources to you',
+            'It is $bandit1a.person , who thanks you for sparing their life and offers their resources to you',
             frozenset(['thanks', 'spareLife']),
-            set(['$quest1e1.person'])
+            set(['$bandit1a.person'])
         ),
     ]
 

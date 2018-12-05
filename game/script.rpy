@@ -28,6 +28,8 @@ python early:
                 return False
             if self.personality != other.personality:
                 return False
+            if self.stage != other.stage:
+                return False
             if self.refTags != other.refTags:
                 return False
             return True
