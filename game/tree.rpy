@@ -74,12 +74,17 @@ init 1 python:
             for tg in tags:
                 if '$' in tg:  # $ tags are meant to be substituted during runtime
                     tags.remove(tg)
+                    wEnd = ""
+                    space = tg.split()
+                    tg = space[0]
+                    if len(space) > 1:
+                        wEnd = " " + space[1]
                     tg = tg[1:]
                     tg = tg.split('.')
                     if len(tg) == 1:
-                        tg = persistent.history.refTags[tg[0]]
+                        tg = persistent.history.refTags[tg[0]] + wEnd
                     elif len(tg) == 2:
-                        tg = persistent.history.refTags[tg[0]][tg[1]]
+                        tg = persistent.history.refTags[tg[0]][tg[1]] + wEnd
                     tags.add(tg)
                 if '~' in tg:  # ~ tags are meant to be used as a blocker
                     k = tg[1:]
@@ -259,5 +264,7 @@ label tree_start:
     jump tree_event
 
 label tree_event:
-    $nextTags = executeEvent(pickEvent(nextTags))
-    jump tree_event
+    $nextE = pickEvent(nextTags)
+    if nextTags:
+        $nextTags = executeEvent(nextE)
+        jump tree_event

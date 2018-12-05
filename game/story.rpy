@@ -230,7 +230,7 @@ init 2 python:
                 ),
             ],
 
-        'passDeed1':
+        'pastDeed1':
             [
                 StoryEvent(
                     'pastDeed1',
@@ -242,7 +242,7 @@ init 2 python:
                 ),
             ],
 
-        'passDeed2':
+        'pastDeed2':
             [
                 StoryEvent(
                     'pastDeed2',
@@ -391,7 +391,7 @@ init 2 python:
         ),
         Action(
             'revengeReveal',
-            'Hello, my name is $person , you killed my father $bandit1a.person , prepare to die!' ,
+            'Hello, my name is $cPerson , you killed my father $bandit1a.person , prepare to die!' ,
             frozenset(['enemy', 'revenge', 'reveal']),
             set(['$bandit1a.person child'])
         ),
@@ -555,10 +555,10 @@ init 2 python:
         Person("Thoros of Myr", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Thoros of Myr', 'redpriest'])),
         Person("Samwell Tarly", { 'nice': 10.0, 'social': -10.0, 'aggress': -10.0 }, frozenset(['Samwell Tarly', 'weak', 'rich', 'kind', 'calm'])),
         Person("Viserys Targaryen", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Viserys Targaryen', 'weak', 'rich', 'brat', 'calm'])),
-        Person("Lyssa Arryn", { 'nice': -10.0, 'social': -10.0, 'aggress': 10.0 }, frozenset(['Lyssan Arryn', 'weak', 'rich', 'psycho', 'calm'])),
+        Person("Lyssa Arryn", { 'nice': -10.0, 'social': -10.0, 'aggress': 10.0 }, frozenset(['Lyssa Arryn', 'weak', 'rich', 'psycho', 'calm'])),
         Person("HIZDAHR ZO LORAQ", { 'nice': -10.0, 'social': 10.0, 'aggress': -10.0 }, frozenset(['HIZDAHR ZO LORAQ', 'weak', 'rich', 'pompous', 'calm'])),
         Person("John Tarly", { 'nice': 10.0, 'social': -10.0, 'aggress': -10.0 }, frozenset(['John Tarly', 'Samwell Tarly child', 'rich', 'kind', 'calm'])),
         Person("Menu Targaryen", { 'nice': -10.0, 'social': 10.0, 'aggress': 10.0 }, frozenset(['Menu Targaryen', 'Viserys Targaryen child', 'rich', 'brat', 'calm'])),
-        Person("Joe Arryn", { 'nice': -10.0, 'social': -10.0, 'aggress': 10.0 }, frozenset(['Joe Arryn', 'Lyssan Arryn child', 'rich', 'psycho', 'calm'])),
+        Person("Joe Arryn", { 'nice': -10.0, 'social': -10.0, 'aggress': 10.0 }, frozenset(['Joe Arryn', 'Lyssa Arryn child', 'rich', 'psycho', 'calm'])),
         Person("BIZAR ZO LORAQ", { 'nice': -10.0, 'social': 10.0, 'aggress': -10.0 }, frozenset(['BIZAR ZO LORAQ', 'HIZDAHR ZO LORAQ child', 'rich', 'pompous', 'calm'])),
     ]
